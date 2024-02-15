@@ -66,3 +66,28 @@ class UserLoginView(TokenObtainPairView):
                 {"success": False, "error": "An error occurred during login."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ItemPurchaseView(APIView):
+    def post(self, request):
+        try:
+            serialized_data = ItemPurchaseSerializer(data=request.data)
+            if not serialized_data.is_valid():
+                return Response(
+                    {"success": False, "error": serialized_data.errors},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            serialized_data.save()
+            return Response(
+                {
+                    "success": True,
+                    "message": "Item Purchased successfully",
+                    "data": serialized_data.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": "An error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
