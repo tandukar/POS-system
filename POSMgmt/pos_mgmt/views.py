@@ -69,6 +69,25 @@ class UserLoginView(TokenObtainPairView):
 
 
 class ItemPurchaseView(APIView):
+    def get(self, request):
+        try:
+            serialized_data = ItemPurchaseSerializer(
+                ItemPurchase.objects.all(), many=True
+            )
+            return Response(
+                {
+                    "success": True,
+                    "message": "Expenses retrieved successfully",
+                    "data": serialized_data.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": "An error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
     def post(self, request):
         try:
             serialized_data = ItemPurchaseSerializer(data=request.data)
