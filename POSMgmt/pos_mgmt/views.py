@@ -110,3 +110,52 @@ class ItemPurchaseView(APIView):
                 {"success": False, "error": "An error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ItemPurchaseDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = ItemPurchase.objects.all()
+    serializer_class = ItemPurchaseSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(
+            {
+                "success": True,
+                "message": "Purhcased item retrieved successfully",
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            if not serializer.is_valid():
+                return Response(
+                    {"success": False, "error": serializer.errors},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            serializer.save()
+            return Response(
+                {
+                    "success": True,
+                    "message": "Purhcased item  Updated successfully",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            data = {"success": False, "message": str(e)}
+            return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            instance.delete()
+            data = {"success": True, "message": "Purhcased item  deleted successfully"}
+            return Response(data, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            data = {"success": False, "message": str(e)}
+            return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
