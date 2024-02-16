@@ -30,3 +30,9 @@ class ItemPurchaseSerializer(serializers.ModelSerializer):
             inventory_item = InventoryItem.objects.create(**validated_data)
 
         return super().create(validated_data)
+
+
+class ItemSalesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemSale
+        fields = "__all__"
