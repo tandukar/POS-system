@@ -4,6 +4,7 @@ from .views import (
     UserLoginView,
     ItemPurchaseView,
     ItemPurchaseDetailView,
+    ItemSalesView,
 )
 
 
@@ -16,4 +17,5 @@ urlpatterns = [
         ItemPurchaseDetailView.as_view(),
         name="ItemPurchase-detail",
     ),
+    path("item-sales/", ItemSalesView.as_view(), name="item-sales"),
 ]

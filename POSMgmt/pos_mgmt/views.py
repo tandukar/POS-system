@@ -3,12 +3,13 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserProfile, InventoryItem, ItemPurchase, Organization
+from .models import UserProfile, InventoryItem, ItemPurchase, Organization, ItemSale
 from .serializers import (
     CustomUserSerializer,
     LoginSerializer,
     InventoryItemSerializer,
     ItemPurchaseSerializer,
+    ItemSalesSerializer,
 )
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import authenticate
@@ -159,3 +160,45 @@ class ItemPurchaseDetailView(RetrieveUpdateDestroyAPIView):
         except Exception as e:
             data = {"success": False, "message": str(e)}
             return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ItemSalesView(APIView):
+    def get(self, request):
+        try:
+            serialized_data = ItemSalesSerializer(ItemSale.objects.all(), many=True)
+            return Response(
+                {
+                    "success": True,
+                    "message": "Sales retrieved successfully",
+                    "data": serialized_data.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": "An error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def post(self, request):
+        try:
+            serialized_data = ItemSalesSerializer(data=request.data)
+            if not serialized_data.is_valid():
+                return Response(
+                    {"success": False, "error": serialized_data.errors},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            serialized_data.save()
+            return Response(
+                {
+                    "success": True,
+                    "message": "Item Sold successfully",
+                    "data": serialized_data.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": "An error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
