@@ -77,3 +77,19 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ItemSale(models.Model):
+    item_code = models.CharField(max_length=10)
+    item_name = models.CharField(max_length=100)
+    quantity = models.PositiveIntegerField()
+    quantity_unit = models.CharField(max_length=50, null=True, blank=True)
+    sales_price = models.FloatField(default=0.00)
+    sales_price_unit = models.CharField(max_length=50, null=True, blank=True)
+    customer_name = models.CharField(max_length=255, null=True, blank=True)
+    customer_phone = models.CharField(max_length=255, null=True, blank=True)
+    sold_date = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.item_name
