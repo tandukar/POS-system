@@ -93,3 +93,16 @@ class ItemSale(models.Model):
 
     def __str__(self):
         return self.item_name
+
+
+class Store(models.Model):
+    store_name =  models.CharField(max_length=255)
+    store_owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    store_phone = models.IntegerField()
+    store_email = models.EmailField(blank=True)
+    address = models.CharField(max_length=255)
+    logo = models.TextField()
+    established_date = models.DateField()
+
+    def __str__(self):
+        return self.store_name

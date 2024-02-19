@@ -202,3 +202,8 @@ class ItemSalesView(APIView):
                 {"success": False, "error": "An error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class StoreView(APIView):
+    def post(self, request, userid, *args, **kwargs):
+        pass
