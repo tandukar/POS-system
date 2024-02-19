@@ -265,6 +265,7 @@ class StoreView(APIView):
 
 
 class CustomerView(APIView):
+    @user_login_required
     def post(self, request, user_id, *args, **kwargs):
         try:
             serialized_data = CustomerSerializer(data=request.data)
@@ -281,6 +282,24 @@ class CustomerView(APIView):
                     "data": serialized_data.data,
                 },
                 status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": e},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @user_login_required
+    def get(self, request, user_id, *args, **kwargs):
+        try:
+            serialized_data = CustomerSerializer(Customer.objects.all(), many=True)
+            return Response(
+                {
+                    "success": True,
+                    "message": "Customers retrieved successfully",
+                    "data": serialized_data.data,
+                },
+                status=status.HTTP_200_OK,
             )
         except Exception as e:
             return Response(
