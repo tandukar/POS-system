@@ -292,7 +292,7 @@ class CustomerView(APIView):
     @user_login_required
     def get(self, request, user_id, *args, **kwargs):
         try:
-            serialized_data = CustomerSerializer(Customer.objects.all(), many=True)
+            serialized_data = CustomerSerializer(Customer.objects.filer(store=1), many=True)
             return Response(
                 {
                     "success": True,

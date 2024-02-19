@@ -84,8 +84,8 @@ class ItemSales(models.Model):
     item_name = models.CharField(max_length=100)
     quantity = models.PositiveIntegerField()
     quantity_unit = models.CharField(max_length=50, null=True, blank=True)
-    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) 
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) 
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     sold_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -93,7 +93,7 @@ class ItemSales(models.Model):
 
 
 class Store(models.Model):
-    store_name =  models.CharField(max_length=255)
+    store_name = models.CharField(max_length=255)
     store_owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     store_phone = models.IntegerField()
     store_email = models.EmailField(blank=True)
@@ -108,11 +108,13 @@ class Store(models.Model):
 class Customer(models.Model):
     customer_name = models.CharField(max_length=255)
     customer_contact = models.IntegerField()
+    store_id = models.ForeignKey(Store, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.customer_name + self.customer_contact
 
+
 class Transaction(models.Model):
     item_sales = models.ManyToManyField(ItemSales)
-    customer_id = models.ForeignKey(Customer, on_delete = models.CASCADE)
+    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
     transaction_date = models.DateTimeField(auto_now_add=True)
