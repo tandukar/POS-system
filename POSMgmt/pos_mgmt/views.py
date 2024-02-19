@@ -10,6 +10,7 @@ from .models import (
     Organization,
     ItemSales,
     Transaction,
+    Customer,
 )
 from .serializers import (
     CustomUserSerializer,
@@ -18,6 +19,7 @@ from .serializers import (
     ItemPurchaseSerializer,
     ItemSalesSerializer,
     StoreSerializer,
+    CustomerSerializer,
 )
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import authenticate
@@ -251,6 +253,31 @@ class StoreView(APIView):
                 {
                     "success": True,
                     "message": "Store registered successfully",
+                    "data": serialized_data.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": e},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class CustomerView(APIView):
+    def post(self, request, user_id, *args, **kwargs):
+        try:
+            serialized_data = CustomerSerializer(data=request.data)
+            if not serialized_data.is_valid():
+                return Response(
+                    {"success": False, "error": serialized_data.errors},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            serialized_data.save()
+            return Response(
+                {
+                    "success": True,
+                    "message": "Customer registered successfully",
                     "data": serialized_data.data,
                 },
                 status=status.HTTP_201_CREATED,
