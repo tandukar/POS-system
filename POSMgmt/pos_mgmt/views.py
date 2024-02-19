@@ -3,17 +3,26 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserProfile, InventoryItem, ItemPurchase, Organization, ItemSales, Transaction
+from .models import (
+    UserProfile,
+    InventoryItem,
+    ItemPurchase,
+    Organization,
+    ItemSales,
+    Transaction,
+)
 from .serializers import (
     CustomUserSerializer,
     LoginSerializer,
     InventoryItemSerializer,
     ItemPurchaseSerializer,
     ItemSalesSerializer,
+    StoreSerializer,
 )
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.views import TokenObtainPairView
+from .decorators import user_login_required
 
 
 class RegisterUserView(APIView):
@@ -64,7 +73,7 @@ class UserLoginView(TokenObtainPairView):
 
         except Exception as e:
             return Response(
-                {"success": False, "error": "An error occurred during login."},
+                {"success": False, "error": e},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -205,7 +214,7 @@ class ItemSalesView(APIView):
     def post(self, request):
         try:
             item_sales = []
-            for item_data in request.data['items']:
+            for item_data in request.data["items"]:
                 serialized_data = ItemSalesSerializer(data=item_data)
                 if serialized_data.is_valid():
                     item_sale = serialized_data.save()
@@ -214,21 +223,40 @@ class ItemSalesView(APIView):
                 else:
                     return Response(serialized_data.errors)
 
-            transaction = Transaction.objects.create(customer_id = 2)
+            transaction = Transaction.objects.create(customer_id=2)
             transaction.item_sales.set(item_sales)
 
             transaction.save()
             return Response(item_sales)
 
-                      
         except Exception as e:
             return Response(
                 {"success": False, "error": "An error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        
 
 
 class StoreView(APIView):
+    @user_login_required
     def post(self, request, userid, *args, **kwargs):
-        pass
+        try:
+            serialized_data = StoreSerializer(data=request.data)
+            if not serialized_data.is_valid():
+                return Response(
+                    {"success": False, "error": serialized_data.errors},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            serialized_data.save()
+            return Response(
+                {
+                    "success": True,
+                    "message": "Store registered successfully",
+                    "data": serialized_data.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "error": e},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
