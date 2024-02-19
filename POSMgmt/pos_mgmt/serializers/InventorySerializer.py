@@ -34,5 +34,5 @@ class ItemPurchaseSerializer(serializers.ModelSerializer):
 
 class ItemSalesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ItemSale
+        model = ItemSales
         fields = "__all__"

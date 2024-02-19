@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserProfile, InventoryItem, ItemPurchase, Organization, ItemSale
+from .models import UserProfile, InventoryItem, ItemPurchase, Organization, ItemSales
 from .serializers import (
     CustomUserSerializer,
     LoginSerializer,
@@ -165,7 +165,7 @@ class ItemPurchaseDetailView(RetrieveUpdateDestroyAPIView):
 class ItemSalesView(APIView):
     def get(self, request):
         try:
-            serialized_data = ItemSalesSerializer(ItemSale.objects.all(), many=True)
+            serialized_data = ItemSalesSerializer(ItemSales.objects.all(), many=True)
             return Response(
                 {
                     "success": True,
