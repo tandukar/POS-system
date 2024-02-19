@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserProfile, InventoryItem, ItemPurchase, Organization, ItemSales
+from .models import UserProfile, InventoryItem, ItemPurchase, Organization, ItemSales, Transaction
 from .serializers import (
     CustomUserSerializer,
     LoginSerializer,
@@ -180,28 +180,53 @@ class ItemSalesView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    # def post(self, request):
+    #     try:
+    #         serialized_data = ItemSalesSerializer(data=request.data)
+    #         if not serialized_data.is_valid():
+    #             return Response(
+    #                 {"success": False, "error": serialized_data.errors},
+    #                 status=status.HTTP_400_BAD_REQUEST,
+    #             )
+    #         serialized_data.save()
+    #         return Response(
+    #             {
+    #                 "success": True,
+    #                 "message": "Item Sold successfully",
+    #                 "data": serialized_data.data,
+    #             },
+    #             status=status.HTTP_201_CREATED,
+    #         )
+    #     except Exception as e:
+    #         return Response(
+    #             {"success": False, "error": "An error occurred."},
+    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         )
     def post(self, request):
         try:
-            serialized_data = ItemSalesSerializer(data=request.data)
-            if not serialized_data.is_valid():
-                return Response(
-                    {"success": False, "error": serialized_data.errors},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            serialized_data.save()
-            return Response(
-                {
-                    "success": True,
-                    "message": "Item Sold successfully",
-                    "data": serialized_data.data,
-                },
-                status=status.HTTP_201_CREATED,
-            )
+            item_sales = []
+            for item_data in request.data['items']:
+                serialized_data = ItemSalesSerializer(data=item_data)
+                if serialized_data.is_valid():
+                    item_sale = serialized_data.save()
+                    print(item_sale.id)
+                    item_sales.append(item_sale.id)
+                else:
+                    return Response(serialized_data.errors)
+
+            transaction = Transaction.objects.create(customer_id = 2)
+            transaction.item_sales.set(item_sales)
+
+            transaction.save()
+            return Response(item_sales)
+
+                      
         except Exception as e:
             return Response(
                 {"success": False, "error": "An error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        
 
 
 class StoreView(APIView):
