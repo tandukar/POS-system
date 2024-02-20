@@ -110,6 +110,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Cross-site Scripting(XSS) Protection
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# SSL REDIRECT
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security(HSTS)
+SECURE_HSTS_SECONDS = 86400
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
