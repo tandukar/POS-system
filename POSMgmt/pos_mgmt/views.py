@@ -174,6 +174,7 @@ class ItemPurchaseDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class ItemSalesView(APIView):
+    @user_login_required
     def get(self, request):
         try:
             serialized_data = ItemSalesSerializer(ItemSales.objects.all(), many=True)
@@ -191,28 +192,7 @@ class ItemSalesView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    # def post(self, request):
-    #     try:
-    #         serialized_data = ItemSalesSerializer(data=request.data)
-    #         if not serialized_data.is_valid():
-    #             return Response(
-    #                 {"success": False, "error": serialized_data.errors},
-    #                 status=status.HTTP_400_BAD_REQUEST,
-    #             )
-    #         serialized_data.save()
-    #         return Response(
-    #             {
-    #                 "success": True,
-    #                 "message": "Item Sold successfully",
-    #                 "data": serialized_data.data,
-    #             },
-    #             status=status.HTTP_201_CREATED,
-    #         )
-    #     except Exception as e:
-    #         return Response(
-    #             {"success": False, "error": "An error occurred."},
-    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         )
+    @user_login_required
     def post(self, request):
         try:
             item_sales = []
@@ -225,7 +205,9 @@ class ItemSalesView(APIView):
                 else:
                     return Response(serialized_data.errors)
 
-            transaction = Transaction.objects.create(customer_id=2)
+            transaction = Transaction.objects.create(
+                customer_id=request.data["customer_contact"]
+            )
             transaction.item_sales.set(item_sales)
 
             transaction.save()

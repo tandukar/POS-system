@@ -84,7 +84,7 @@ class Organization(models.Model):
 class ItemSales(models.Model):
     item_code = models.CharField(max_length=10)
     item_name = models.CharField(max_length=100)
-    quantity = models.PositiveIntegerField()
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     quantity_unit = models.CharField(max_length=50, null=True, blank=True)
     rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
