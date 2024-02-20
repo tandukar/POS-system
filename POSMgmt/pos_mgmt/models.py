@@ -95,7 +95,7 @@ class ItemSales(models.Model):
 class Store(models.Model):
     store_name = models.CharField(max_length=255)
     store_owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    store_phone = models.IntegerField()
+    store_contact = models.CharField(max_length=30)
     store_email = models.EmailField(blank=True)
     address = models.CharField(max_length=255)
     logo = models.TextField()
