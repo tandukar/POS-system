@@ -278,7 +278,7 @@ class CustomerView(APIView):
             store = check_user_store(user_id)
             print(store)
             serialized_data = CustomerSerializer(
-                Customer.objects.filter(store_id=1), many=True
+                Customer.objects.filter(store_id=store), many=True
             )
             return Response(
                 {
