@@ -25,6 +25,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .decorators import user_login_required
+from .utlis import check_user_store
 
 
 class RegisterUserView(APIView):
@@ -274,6 +275,8 @@ class CustomerView(APIView):
     @user_login_required
     def get(self, request, user_id, *args, **kwargs):
         try:
+            store = check_user_store(user_id)
+            print(store)
             serialized_data = CustomerSerializer(
                 Customer.objects.filter(store_id=1), many=True
             )
@@ -282,6 +285,7 @@ class CustomerView(APIView):
                     "success": True,
                     "message": "Customers retrieved successfully",
                     "data": serialized_data.data,
+                    "store": store,
                 },
                 status=status.HTTP_200_OK,
             )
