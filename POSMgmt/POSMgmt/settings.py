@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+SHARED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -41,9 +41,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "django_tenants",
     "pos_mgmt",
 ]
 
+TENANT_APPS = []
+
+INSTALLED_APPS = SHARED_APPS + [
+    app for app in TENANT_APPS if app not in SHARED_APPS
+]  # only add tenant apps if they are not already in the shared apps
 AUTH_USER_MODEL = "pos_mgmt.UserProfile"
 
 MIDDLEWARE = [
@@ -92,7 +98,7 @@ DATABASES = {
     }
 }
 
-DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
+DATABASE_ROUTERS = "django_tenants.routers.TenantSyncRouter"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
