@@ -7,8 +7,6 @@ from .serializers import StoreSerializer
 def check_user_store(user_id):
     try:
         store = Store.objects.get(store_owner=user_id)
-        serializer = StoreSerializer(store)
-        print("lorem ipsum dolor sit amet")
-        return serializer.data.get("id")
+        return StoreSerializer(store).data.get("id")
     except Store.DoesNotExist:
         return None
